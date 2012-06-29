@@ -1,0 +1,341 @@
+#!/usr/bin/python
+
+import time
+import urllib2
+import sys
+import os
+from HTMLParser import HTMLParser
+from optparse import OptionParser
+from threading import Thread
+from threading import Lock
+import errno
+
+chunk_size = 256
+
+#global archs
+archs = ["i686", "ppc", "ppc64", "x86_64"]
+#archs = ["i686",  "x86_64"]
+class RPMFilter(HTMLParser):
+    global archs
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.rpm_dict = {}
+        for arch in archs:
+            self.rpm_dict[arch] = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'a':
+            rpm = attrs[0][1]
+            for arch in archs:
+                if ".%s." % arch in rpm:
+                    self.rpm_dict[arch].append(rpm)
+                    #print "%s is package with arch: %s" % (rpm, arch)
+
+    def handle_endtag(self, tag):
+        pass
+
+    def get_rpm_dict(self):
+        return self.rpm_dict
+
+
+class Package:
+    def __init__(self, name, url, size, arch):
+        #print "package init"
+        self.name = name
+        self.url = url
+        self.size = size
+        self.arch = arch
+        self.downloaded = 0
+
+# koji: task_url = "http://kojipkgs.fedoraproject.org/scratch/%s/task_%s" % (username, task_id)
+# brew: task_url = "http://download.englab.brq.redhat.com/brewroot/scratch/%s/task_%s" % (username, task_id)
+class ScratchDownloader:
+    build_sys_urls = {"koji":"http://kojipkgs.fedoraproject.org/scratch/%s/task_%s",
+                  "brew":"http://download.englab.brq.redhat.com/brewroot/scratch/%s/task_%s"
+                  }
+
+    def __init__(self, build_sys, username, task_id):
+        self.package_list = {}
+        self.task_url = self.build_sys_urls[build_sys] % (username, task_id)
+        print "ScratchDownloader init.."
+        print self.task_url
+
+    def get_package_size(self, package):
+        package_url = "%s/%s" % (self.task_url, package)
+        f = urllib2.urlopen(package_url)
+        size = int(f.headers["Content-Length"])
+        f.close()
+        return size
+
+    def get_package_list(self, arch=None, refresh=False):
+        """ gets list of packages for specific arch """
+        if self.package_list and not refresh:
+            # return cached package list
+            if arch:
+                return {arch:self.package_list[arch]}
+            return self.package_list
+
+        print self.task_url
+        try:
+            url = urllib2.urlopen(self.task_url)
+        except urllib2.HTTPError, ex:
+            print "Error opening the url: %s" % ex
+            return []
+        except urllib2.URLError, ex:
+            print "Error opening the url: %s" % ex
+            return []
+        rpmfilter = RPMFilter()
+        for line in url.readlines():
+            rpmfilter.feed(line)
+
+        rpm_list = rpmfilter.get_rpm_dict()
+        for arch_ in archs:
+            self.package_list[arch_] = []
+            for rpm in rpm_list[arch_]:
+                package_url = "%s/%s" % (self.task_url, rpm)
+                print "Getting info for: %s" % package_url
+                package = Package(rpm, package_url, self.get_package_size(rpm), arch_)
+                self.package_list[arch_].append(package)
+
+        if arch:
+            return {arch:self.package_list[arch]}
+        return self.package_list
+
+    def download_package(self, package, dest=None, cback=None):
+        if dest:
+            dest_dir = "%s/%s" % (dest, package.arch)
+        else:
+            dest_dir = package.arch
+
+        chunk_size = 256
+        f = urllib2.urlopen(package.url)
+        #print "\t%s: \033[s" % rpm,
+
+        try:
+            os.makedirs(dest_dir)
+        except OSError, ex:
+            if ex[0] != errno.EEXIST:
+                raise ex
+
+
+        #if not cback:
+        #   print "{0:40.40s}: \033[s".format(package.name)
+
+
+
+        fout = open("%s/%s" % (dest_dir, package.name), "wb")
+        # TODO: skip to header fetching if there is no callback
+        #if cback
+        bytes_to_read = int(f.headers["Content-Length"])
+        size = int(f.headers["Content-Length"])
+        while bytes_to_read:
+            # we reached the end of file...
+            if chunk_size > bytes_to_read:
+                data = f.read(bytes_to_read)
+                bytes_to_read = 0
+            else:
+                data = f.read(chunk_size)
+                bytes_to_read -= chunk_size
+
+            fout.write(data)
+            package.downloaded = (size-bytes_to_read)/(size/100)
+            if cback:
+                #cback((size-bytes_to_read)/(size/100))
+                cback(package)
+            else:
+                print "\033[u%i%%" % ((size-bytes_to_read)/(size/100)),
+                sys.stdout.flush()
+        if cback:
+            cback(package)
+            #cback((size-bytes_to_read)/(size/100))
+        else:
+            print
+        fout.close()
+        f.close()
+
+    def download_arch(self, arch, cback=None):
+        for package in self.get_package_list(arch)[arch]:
+            #print package
+            self.download_package(arch, package,  cback)
+            if not cback:
+                print
+
+class TUI:
+    def __init__(self, build_sys, username, task_id, dest_dir = None):
+        self.dest_dir = dest_dir
+        self.downloader = ScratchDownloader(build_sys, username, task_id)
+        package_list = self.downloader.get_package_list()
+
+    def update_download_progress(self, progress):
+        return
+        print progress
+
+    def download_package(self, package):
+        packages_list = self.downloader.get_package_list()
+        # download abrt-
+        self.downloader.download_package(package_list["x86_64"][0],cback=self.update_download_progress)
+
+    def download_arch():
+        print "tui download_arch"
+
+    def run(self):
+        packages_dict = self.downloader.get_package_list()
+        for arch in packages_dict.keys():
+            print "Arch: %s" % arch
+            for package in packages_dict[arch]:
+                print "Downloading package: %s to %s" % (package.name, self.dest_dir)
+                self.downloader.download_package(package, self.dest_dir, cback=self.update_download_progress)
+
+
+class GUI:
+    class ThreadedDownload(Thread):
+        def __init__ (self, package, save_function):
+            Thread.__init__(self)
+            self.package = package
+            self.thread_function = save_function
+
+        def run(self):
+            self.thread_function(self.package)
+
+    import gtk
+    import gobject
+    packages_dict = None
+    package_row_dict = {}
+    update_lock = Lock()
+    def __init__(self, build_sys, username, task_id):
+        self.builder = GUI.gtk.Builder()
+        self.builder.add_from_file("scratch_downloader.gtkbuilder")
+
+        # connect button signals
+        bClose = self.builder.get_object("bClose")
+        bClose.connect("clicked",GUI.gtk.main_quit)
+
+        bDownload = self.builder.get_object("bDownload")
+        bDownload.connect("clicked", self.on_save_clicked)
+
+        # main window
+        self.main_window = self.builder.get_object("main_window")
+        self.main_window.connect("destroy", GUI.gtk.main_quit)
+
+        # fill treeview
+        self.tvPackages = self.builder.get_object("tvPackages")
+        self.tvPackages.get_selection().set_mode(GUI.gtk.SELECTION_MULTIPLE)
+        self.packageTreeStore = GUI.gtk.TreeStore(str, float, object)
+        # package name column
+        cell = GUI.gtk.CellRendererText()
+        column = GUI.gtk.TreeViewColumn("Packages")
+        column.set_sort_column_id(0)
+        column.pack_start(cell)
+        column.set_attributes(cell, text=0)
+        self.tvPackages.append_column(column)
+        # progress bar column
+        progress_cell = GUI.gtk.CellRendererProgress()
+        progress_column = GUI.gtk.TreeViewColumn("Progress")
+        progress_column.pack_start(progress_cell)
+        progress_column.set_attributes(progress_cell, value=1)
+        self.tvPackages.append_column(progress_column)
+
+        self.tvPackages.set_model(self.packageTreeStore)
+        self.downloader = ScratchDownloader(build_sys, username, task_id)
+
+    def get_selected_packages(self):
+        retval = []
+        packageTreeStore, path = self.tvPackages.get_selection().get_selected_rows()
+        for x in path:
+            selection = packageTreeStore.get_value(packageTreeStore.get_iter(x),
+                                                    packageTreeStore.get_n_columns()-1)
+            for package in selection:
+                retval.append(package)
+                pass
+        #print selection
+        return retval
+
+    def hydrate(self, data=None):
+        print "gui hydrate"
+        self.packages_dict = self.downloader.get_package_list()
+        for arch in self.packages_dict:
+            #print arch
+            parent = self.packageTreeStore.insert(None, 0, [arch, 0, self.packages_dict[arch]])
+            self.package_row_dict[arch] = parent
+            for package in self.packages_dict[arch]:
+                #print package
+                package_row_it = self.packageTreeStore.insert(parent, 0, [package.name, package.downloaded, [package]])
+                self.package_row_dict[package] = package_row_it
+        GUI.gobject.source_remove(self.hydrate_timer)
+        self.wHydrate.hide()
+
+    def update_status(self, package):
+        self.update_lock.acquire()
+        package_it = self.package_row_dict[package]
+        self.packageTreeStore.set_value(package_it, 1, package.downloaded)
+        # update arch status:
+        arch_status = 0
+        for package in self.packages_dict[package.arch]:
+            arch_status += package.downloaded
+        arch_it = self.package_row_dict[package.arch]
+        self.packageTreeStore.set_value(arch_it, 1, arch_status/len(self.packages_dict[package.arch]))
+
+        #print ">> ", package.downloaded
+        self.update_lock.release()
+
+    def on_save_clicked(self, button, data=None):
+        packages = self.get_selected_packages()
+        for package in packages:
+            threaded_downloader = GUI.ThreadedDownload(package, self.download_package)
+            threaded_downloader.start()
+
+    def download_package(self, package):
+        #packages = self.get_selected_packages()
+        #for package in packages:
+        self.downloader.download_package(package, cback=self.update_status)
+
+    def foo(self):
+        print "ke"
+
+    def save(self, package):
+        print package
+
+    def run(self):
+        self.wHydrate = self.builder.get_object("wHydrate")
+        self.wHydrate.set_transient_for(self.main_window)
+        self.pbar = self.builder.get_object("pbHydrating")
+        self.hydrate_timer = GUI.gobject.timeout_add(500, self.hydrate)
+        self.main_window.show_all()
+        self.wHydrate.show_all()
+        GUI.gobject.threads_init()
+        GUI.gtk.main()
+
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-u", "--user", dest="username",
+                        help="username of the build owner")
+    parser.add_option("-t", "--task", dest="task_id", type="int",
+                        help="koji/brew task_id")
+    parser.add_option("-d", "--dest", dest="dest", type="string",
+                        help="dest directory")
+    parser.add_option("-s", "--server", dest="server",
+                        choices=["brew","koji"], default="koji",
+                        help="koji/brew task_id")
+    parser.add_option("-a", "--arch",  dest="arch", default=None, type="string",
+                        help="package's target architecture")
+    parser.add_option("","--ui", default="gui",choices=["tui","gui"],
+                        help="user interface to use [gui,tui]")
+
+
+    (options, args) = parser.parse_args()
+    if not options.username:
+        parser.error("username is an required argument")
+    if not options.task_id:
+        parser.error("task_id is an required argument")
+    if options.arch:
+        archs = [options.arch]
+    if options.dest:
+        dest = options.dest
+    if options.ui == "gui":
+        ui = GUI(options.server, options.username, options.task_id)
+    else:
+        ui = TUI(options.server, options.username, options.task_id, dest_dir=dest)
+
+    print options.username, options.task_id
+
+    ui.run()

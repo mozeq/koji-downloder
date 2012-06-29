@@ -1,0 +1,2 @@
+include src/koji-downloader
+include src/scratch_downloader.gtkbuilder
