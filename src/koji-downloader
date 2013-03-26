@@ -37,6 +37,16 @@ class RPMFilter(HTMLParser):
     def get_rpm_dict(self):
         return self.rpm_dict
 
+import httplib
+
+class ThreadedInfo(Thread):
+    def __init__ (self, package, fn, size):
+        Thread.__init__(self)
+        self.package = package
+        self.thread_function = fn
+
+    def run(self):
+        self.package.size = self.thread_function(self.package)
 
 class Package:
     def __init__(self, name, url, size, arch):
@@ -50,19 +60,23 @@ class Package:
 # koji: task_url = "http://kojipkgs.fedoraproject.org/scratch/%s/task_%s" % (username, task_id)
 # brew: task_url = "http://download.englab.brq.redhat.com/brewroot/scratch/%s/task_%s" % (username, task_id)
 class ScratchDownloader:
-    build_sys_urls = {"koji":"http://kojipkgs.fedoraproject.org/scratch/%s/task_%s",
-                  "brew":"http://download.englab.brq.redhat.com/brewroot/scratch/%s/task_%s"
+    build_sys_urls = {
+                    "koji":("kojipkgs.fedoraproject.org","/scratch/%s/task_%s"),
+                    "brew":("download.englab.brq.redhat.com", "/brewroot/scratch/%s/task_%s"),
                   }
+
+
+
 
     def __init__(self, build_sys, username, task_id):
         self.package_list = {}
-        self.task_url = self.build_sys_urls[build_sys] % (username, task_id)
+        self.url_suffix = self.build_sys_urls[build_sys][1] % (username, task_id)
+        self.task_url = "http://" + self.build_sys_urls[build_sys][0] + self.url_suffix
         print "ScratchDownloader init.."
-        print self.task_url
+        #print self.task_url
 
     def get_package_size(self, package):
-        package_url = "%s/%s" % (self.task_url, package)
-        f = urllib2.urlopen(package_url)
+        f = urllib2.urlopen(package.url)
         size = int(f.headers["Content-Length"])
         f.close()
         return size
@@ -75,7 +89,7 @@ class ScratchDownloader:
                 return {arch:self.package_list[arch]}
             return self.package_list
 
-        print self.task_url
+        #print self.task_url
         try:
             url = urllib2.urlopen(self.task_url)
         except urllib2.HTTPError, ex:
@@ -89,13 +103,23 @@ class ScratchDownloader:
             rpmfilter.feed(line)
 
         rpm_list = rpmfilter.get_rpm_dict()
+        threads = []
         for arch_ in archs:
             self.package_list[arch_] = []
             for rpm in rpm_list[arch_]:
+                size = 0
                 package_url = "%s/%s" % (self.task_url, rpm)
                 print "Getting info for: %s" % package_url
-                package = Package(rpm, package_url, self.get_package_size(rpm), arch_)
+                package = Package(rpm, package_url, 0, arch_)
                 self.package_list[arch_].append(package)
+                ti = ThreadedInfo(package, self.get_package_size, size)
+                threads.append(ti)
+                ti.start()
+
+        # wait for all the threads fetching the size info
+        for t in threads:
+            t.join()
+
 
         if arch:
             return {arch:self.package_list[arch]}
