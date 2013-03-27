@@ -186,7 +186,6 @@ class ScratchDownloader:
 
 class TUI:
     def __init__(self, build_sys, username, task_id, dest_dir = None):
-        self.dest_dir = dest_dir
         self.downloader = ScratchDownloader(build_sys, username, task_id)
         package_list = self.downloader.get_package_list()
 
@@ -207,8 +206,8 @@ class TUI:
         for arch in packages_dict.keys():
             print "Arch: %s" % arch
             for package in packages_dict[arch]:
-                print "Downloading package: %s to %s" % (package.name, self.dest_dir)
-                self.downloader.download_package(package, self.dest_dir, cback=self.update_download_progress)
+                print "Downloading package: %s" % (package.name)
+                self.downloader.download_package(package, cback=self.update_download_progress)
 
 
 class GUI:
@@ -358,7 +357,7 @@ if __name__ == "__main__":
     if options.ui == "gui":
         ui = GUI(options.server, options.username, options.task_id)
     else:
-        ui = TUI(options.server, options.username, options.task_id, dest_dir=dest)
+        ui = TUI(options.server, options.username, options.task_id)
 
     print options.username, options.task_id
 
