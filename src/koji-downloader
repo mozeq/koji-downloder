@@ -10,6 +10,8 @@ from threading import Thread
 from threading import Lock
 import errno
 
+from taskparser import Task
+
 chunk_size = 256
 
 #global archs
@@ -330,35 +332,35 @@ class GUI:
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("-u", "--user", dest="username",
-                        help="username of the build owner")
-    parser.add_option("-t", "--task", dest="task_id", type="int",
-                        help="koji/brew task_id")
     parser.add_option("-d", "--dest", dest="dest", type="string",
                         help="dest directory")
-    parser.add_option("-s", "--server", dest="server",
-                        choices=["brew","koji"], default="koji",
-                        help="koji/brew task_id")
     parser.add_option("-a", "--arch",  dest="arch", default=None, type="string",
                         help="package's target architecture")
     parser.add_option("","--ui", default="gui",choices=["tui","gui"],
                         help="user interface to use [gui,tui]")
 
+    parser.add_option("","--url", dest="url",
+                    help="Task url")
+
 
     (options, args) = parser.parse_args()
-    if not options.username:
-        parser.error("username is an required argument")
-    if not options.task_id:
-        parser.error("task_id is an required argument")
+    if not options.url:
+        parser.error("url is an required argument")
+
+    sys.stdout.write("Fetching task info...")
+    sys.stdout.flush()
+    task = Task(options.url)
+    sys.stdout.write("DONE\n")
+
     if options.arch:
         archs = [options.arch]
     if options.dest:
         dest = options.dest
     if options.ui == "gui":
-        ui = GUI(options.server, options.username, options.task_id)
+        ui = GUI(task.ttype, task.user, task.tid)
     else:
-        ui = TUI(options.server, options.username, options.task_id)
+        ui = TUI(task.ttype, task.user, task.tid)
 
-    print options.username, options.task_id
+    print task.ttype, task.user, task.tid
 
     ui.run()

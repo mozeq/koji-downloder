@@ -1,0 +1,498 @@
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>build (rhel-7.0-candidate, libreport-2.1.3-1.1.internal.el7.src.rpm) | Task Info | Brew</title>
+    <link rel="shortcut icon" href="/koji-static/themes/brew/images/koji.ico"/>
+    <link rel="stylesheet" type="text/css" media="screen" title="Koji Style" href="/koji-static/themes/brew/koji.css"/>
+    <link rel="alternate stylesheet" type="text/css" media="screen" title="Debug" href="/koji-static/debug.css"/>
+    <link rel="alternate" type="application/rss+xml" title="Koji: recent builds" href="/koji/recentbuilds"/>
+  </head>
+  <body id="tasks">
+
+    <div id="wrap">
+      <div id="innerwrap">
+
+        <!-- HEADER -->
+        <div id="header">
+          <img src="/koji-static/themes/brew/images/koji.png" alt="Koji Logo" id="kojiLogo"/>
+<script src="/koji-static/themes/brew/jquery-1.6.4.min.js" type="text/javascript"/></script>
+<script src="/koji-static/themes/brew/jquery.cookie.js" type="text/javascript"/></script>
+<script src="https://engineering.redhat.com/scripts/eng-tools-topbar.js" type="text/javascript"/></script>
+<div class="toparea-wrap">
+    <!--<div id="ESO-slider" style="display:none;">
+      <a href="http://engineering.redhat.com/"><span id="ESO-title">
+        ENGINEERING TOOLS
+      </span></a>
+      <span id="ESO-linkss">
+              <span style="display:inline-block">
+                    <a href="https://orgchart-stage.eng.bne.redhat.com/"><span id="people-link"> People </span></a>
+                    <a href="https://engineering.redhat.com/pp/"><span id="product-link"> Product </span></a>
+                    <a href="https://engineering.redhat.com/docbot/en-US/Internal/5.0/html/Performance/"><span id="performance-link"> Performance </span></a>
+<a href="#" onclick="$('#all-tools-dropdown').toggle();$('#tools-link').toggleClass('active');$('.menubox').hide();$('.dropdown').removeClass('active');event.stopPropagation();
+"><span id="tools-link"> All Tools </span></a>
+                </span>
+      </span>
+    </div>
+	<div id="all-tools-dropdown">
+	<a href="https://beaker.engineering.redhat.com/" target="_blank"><div class="cell core" id="beaker">
+					<div class="icon"></div>
+					<div class="title">
+						Beaker
+					</div>
+				</div></a>
+				<a href="http://bugzilla.redhat.com/"><div class="cell core" id="bugzilla">
+					<div class="icon"></div>
+					<div class="title">
+						Bugzilla
+					</div>
+				</div></a>
+				<a href="http://brewweb.devel.redhat.com/"><div class="cell core" id="brew">
+					<div class="icon"></div>
+					<div class="title">
+						Brew
+					</div>
+				</div></a>
+				<a href="https://pkgwrangler.app.eng.bos.redhat.com/home/"><div class="cell core" id="wrangler">
+					<div class="icon"></div>
+					<div class="title">
+						Wrangler
+					</div>
+				</div></a>
+				<a href="http://errata.devel.redhat.com/"><div class="cell core">
+					<div class="icon"></div>
+					<div class="title">
+						Errata Tool
+					</div>
+				</div></a>
+				<a href="https://tcms.engineering.redhat.com/"><div class="cell core" id="nitrate">
+					<div class="icon"></div>
+					<div class="title">
+						Nitrate
+					</div>
+				</div></a>
+				<a href="http://git.engineering.redhat.com/"><div class="cell core" id="git1">
+					<div class="icon"></div>
+					<div class="title">
+						User GIT
+					</div>
+				</div></a>
+				<a href="http://git.app.eng.bos.redhat.com/"><div class="cell core" id="git2">
+					<div class="icon"></div>
+					<div class="title">
+						Project GIT
+					</div>
+				</div></a>
+				<a href="http://svn.devel.redhat.com"><div class="cell core" id="svn">
+					<div class="icon"></div>
+					<div class="title">
+						SVN
+					</div>
+				</div></a>
+				<a href="http://cvs.devel.redhat.com"><div class="cell core" id="svn">
+					<div class="icon"></div>
+					<div class="title">
+						CVS
+					</div>
+				</div></a>
+				<a href="https://vdb.engineering.redhat.com/"><div class="cell supported" id="vdb">
+					<div class="icon"></div>
+					<div class="title">
+						VDB
+					</div>
+				</div></a>
+				<a href="https://engineering.redhat.com/rt3/"><div class="cell supported" id="rt">
+					<div class="icon"></div>
+					<div class="title">
+						RT
+					</div>
+				</div></a>
+				<a href="https://analytics.engineering.redhat.com"><div class="cell supported" id="piwik">
+					<div class="icon"></div>
+					<div class="title">
+						Analytics
+					</div>
+				</div></a>
+				<a href="https://engineering.redhat.com/metrics/"><div class="cell supported" id="ackview">
+					<div class="icon"></div>
+					<div class="title">
+						ACK Viewer
+					</div>
+				</div></a>
+				<a href="https://engineering.redhat.com/trac/"><div class="cell supported" id="trac">
+					<div class="icon"></div>
+					<div class="title">
+						Trac
+					</div>
+				</div></a>
+				<a href="https://alfresco.engineering.redhat.com/"><div class="cell supported" id="pnt">
+					<div class="icon"></div>
+					<div class="title">
+						P&amp;T Portal
+					</div>
+				</div></a>
+
+				<a href="https://globalsync.bne.redhat.com"><div class="cell supported">
+					<div class="icon"></div>
+					<div class="title">
+						Globalsync
+					</div>
+				</div></a>
+				<a href="https://hudson.qa.jboss.com/hudson/"><div class="cell techpreview">
+					<div class="icon"></div>
+					<div class="title">
+						Hudson
+					</div>
+				</div></a>
+				<a href="https://translate.engineering.redhat.com/"><div class="cell techpreview">
+					<div class="icon"></div>
+					<div class="title">
+						Zanata
+					</div>
+				</div></a>
+				<a href="https://vault-stage.englab.nay.redhat.com/"><div class="cell techpreview">
+					<div class="icon"></div>
+					<div class="title">
+						Vault
+					</div>
+				</div></a>
+				<a href="http://documentation-stage.bne.redhat.com/docs/"><div class="cell techpreview">
+					<div class="icon"></div>
+					<div class="title">
+						Docs Stage
+					</div>
+				</div></a>
+				<a href="http://pub.devel.redhat.com"><div class="cell techpreview">
+					<div class="icon"></div>
+					<div class="title">
+						Pub
+					</div>
+				</div></a>
+	</div>-->
+    <div id="app-toolbar-wrap">
+        <div id="app-toolbar" class="body_element">
+            <div id="app-name">
+                <span>Brew</span>
+            </div>
+            <div id="app-quicklinks">
+			<span class="menu quicklink">
+				<a class="dropdown" href="#">help</a>
+				<ul class="menubox" style="display: none;">
+					<li>
+						<a href="https://engineering.redhat.com/docs/en-US/Release_Configuration_Management/1/html/Developer_Guide/using-brew.html">documentation</a>
+					</li>
+					<li>
+						<a href="https://engineering.redhat.com/rt/Ticket/Create.html?Queue=7">report issues</a>
+					</li>
+				</ul>
+			</span>
+            <!--<span class="quicklink"><a href="https://orgchart-stage.eng.bne.redhat.com/orgchart?uid=<%= authed_user %>">login</a></span>-->
+                <span id='ESO-slide-button'/>Engineering Tools</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+          <form action="search" id="headerSearch">
+            <input type="hidden" name="match" value="glob"/>
+            <select name="type">
+              <option value="package">Packages</option>
+              <option value="build">Builds</option>
+              <option value="tag">Tags</option>
+              <option value="target">Build Targets</option>
+              <option value="user">Users</option>
+              <option value="host">Hosts</option>
+              <option value="rpm">RPMs</option>
+              <option value="maven">Maven Artifacts</option>
+              <option value="win">Windows Artifacts</option>
+            </select>
+            <input type="text" name="terms"/>
+            <input type="submit" value="Search"/>
+          </form>
+        </div><!-- end header -->
+
+        <!-- MAIN NAVIGATION -->
+        <div id="mainNav">
+          <h4 class="hide">Main Site Links:</h4>
+          <ul>
+            <li id="summaryTab"><a href="index">Summary</a></li>
+            <li id="packagesTab"><a href="packages">Packages</a></li>
+            <li id="buildsTab"><a href="builds">Builds</a></li>
+            <li id="tasksTab"><a href="tasks">Tasks</a></li>
+            <li id="tagsTab"><a href="tags">Tags</a></li>
+            <li id="buildtargetsTab"><a href="buildtargets">Build Targets</a></li>
+            <li id="usersTab"><a href="users">Users</a></li>
+            <li id="hostsTab"><a href="hosts">Hosts</a></li>
+            <li id="reportsTab"><a href="reports">Reports</a></li>
+            <li id="searchTab"><a href="search">Search</a></li>
+          </ul>
+        </div><!-- end mainNav -->
+
+        <span id="loginInfo">
+          Thu, 28 Mar 2013 10:19:10 EDT |
+          bună ziua, <a href="userinfo?userID=566">jmoskovc</a> | <a href="logout">logout</a>
+        </span>
+
+        <div id="content">
+
+  <h4>Information for task <a href="taskinfo?taskID=5578316">build (rhel-7.0-candidate, libreport-2.1.3-1.1.internal.el7.src.rpm)</a></h4>
+
+  <table>
+    <tr>
+      <th>ID</th><td>5578316</td>
+    </tr>
+    <tr>
+      <th>Method</th><td>build</td>
+    </tr>
+    <tr>
+      <th>Parameters</th>
+      <td>
+        <strong>Source:</strong> cli-build/1364472238.934653.EFQHMvqd/libreport-2.1.3-1.1.internal.el7.src.rpm<br/>
+        <strong>Build Target:</strong> <a href="buildtargetinfo?name=rhel-7.0-candidate">rhel-7.0-candidate</a><br/>
+          <strong>Options:</strong><br/>
+    &nbsp;&nbsp;scratch&nbsp;=&nbsp;True
+<br/>
+
+
+      </td>
+    </tr>
+    <tr>
+      <th>State</th>
+      <td class="taskclosed">closed
+      </td>
+    </tr>
+    <tr>
+      <th>Created</th><td>Thu, 28 Mar 2013 08:04:04 EDT</td>
+    </tr>
+    <tr>
+      <th>Started</th><td>Thu, 28 Mar 2013 08:04:05 EDT</td>
+    <tr>
+      <th>Completed</th><td>Thu, 28 Mar 2013 10:08:40 EDT</td>
+    </tr>
+    <tr>
+      <th>Owner</th>
+      <td>
+          <a href="userinfo?userID=1809">jfilak</a>
+      </td>
+    </tr>
+    <tr>
+      <th>Channel</th>
+      <td>
+        <a href="channelinfo?channelID=11">rhel7</a>
+      </td>
+    </tr>
+    <tr>
+      <th>Host</th>
+      <td>
+        <a href="hostinfo?hostID=93">ppc-015.build.eng.bos.redhat.com</a>
+      </td>
+    </tr>
+    <tr>
+      <th>Arch</th><td>noarch</td>
+    </tr>
+    <tr>
+      <th>Parent</th>
+        <td>
+      </td>
+    </tr>
+    <tr>
+      <th>Descendants</th>
+      <td class="tree">
+        <span class="root">build</span>
+          <ul>
+    <li class="sibling">
+      <span class="treeBranch">
+        <span class="treeLabel">
+          <a href="taskinfo?taskID=5578317" class="taskclosed" title="closed">buildArch (libreport-2.1.3-1.1.internal.el7.src.rpm, ppc)</a>
+        </span>
+      </span>
+
+    </li>
+    <li class="sibling">
+      <span class="treeBranch">
+        <span class="treeLabel">
+          <a href="taskinfo?taskID=5578318" class="taskclosed" title="closed">buildArch (libreport-2.1.3-1.1.internal.el7.src.rpm, s390)</a>
+        </span>
+      </span>
+
+    </li>
+    <li class="sibling">
+      <span class="treeBranch">
+        <span class="treeLabel">
+          <a href="taskinfo?taskID=5578319" class="taskclosed" title="closed">buildArch (libreport-2.1.3-1.1.internal.el7.src.rpm, x86_64)</a>
+        </span>
+      </span>
+
+    </li>
+    <li class="sibling">
+      <span class="treeBranch">
+        <span class="treeLabel">
+          <a href="taskinfo?taskID=5578321" class="taskclosed" title="closed">buildArch (libreport-2.1.3-1.1.internal.el7.src.rpm, ppc64)</a>
+        </span>
+      </span>
+
+    </li>
+    <li class="sibling">
+      <span class="treeBranch">
+        <span class="treeLabel">
+          <a href="taskinfo?taskID=5578322" class="taskclosed" title="closed">buildArch (libreport-2.1.3-1.1.internal.el7.src.rpm, i686)</a>
+        </span>
+      </span>
+
+    </li>
+    <li>
+      <span class="treeBranch">
+        <span class="treeLabel">
+          <a href="taskinfo?taskID=5578323" class="taskclosed" title="closed">buildArch (libreport-2.1.3-1.1.internal.el7.src.rpm, s390x)</a>
+        </span>
+      </span>
+
+    </li>
+  </ul>
+
+      </td>
+    </tr>
+    <tr>
+      <th>Waiting?</th><td>no</td>
+    </tr>
+    <tr>
+      <th>Awaited?</th><td>no</td>
+    </tr>
+    <tr>
+      <th>Priority</th><td>20</td>
+    </tr>
+    <tr>
+      <th>Weight</th><td>0.20</td>
+    </tr>
+    <tr>
+      <th>Result</th>
+      <td>
+
+
+      </td>
+    </tr>
+    <tr>
+      <th>Output</th>
+      <td>
+      </td>
+    </tr>
+  </table>
+
+        </div>
+
+        <p id="footer">
+          Copyright &copy; 2006-2010 Red Hat
+          <a href="https://fedorahosted.org/koji/"><img src="/koji-static/images/powered-by-koji.png" alt="Powered By Koji" id="PoweredByKojiLogo"/></a>
+        </p>
+
+<div id="eso-footer">
+<div class="eso-inner">
+<div class="footer-left">
+<span>Brew Web (powered by Koji)</span>
+<br>
+Copyright © 2006 - 2012 Red Hat, Inc. All rights reserved.
+<br>
+INTERNAL USE ONLY<br/>
+</div>
+<div class="footer-right">
+<a href="https://analytics.engineering.redhat.com/">
+<img src="/koji-static/themes/brew/images/activetracking.png">
+</a>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#ESO-slide-button').click(function(){
+            $('#ESO-slider').slideToggle('fast');
+            $('#ESO-slide-button').toggleClass('active')
+        });
+        $('#content').addClass("body_element");
+        $('#mainNav ul').addClass("body_element");
+        $("#loginInfo").addClass("quicklink");
+		$('#headerSearch select[name=type]').val($.cookie("globalSearchType"))
+		$('#headerSearch input[name=terms]').val($.cookie("globalSearchTerm"))
+		$('#headerSearch select[name=type]').wrap("<div id='searchTypeBox'></div>");
+		$('#app-quicklinks').prepend($('#loginInfo'));
+		$("#headerSearch input[value=Search]").toggleClass("hide");
+        $('#app-quicklinks').prepend($('#headerSearch'));
+		$('#headerSearch input[name=terms]').attr('placeholder', "Search "+$('#headerSearch select[name=type] option[value='+$('#headerSearch select[name=type]').val()+']').text()+ " in brew");
+		$('#headerSearch select[name=type]').change(function() {
+  		$('#headerSearch input[name=terms]').attr('placeholder', "Search "+$('#headerSearch select[name=type] option[value='+$('#headerSearch select[name=type]').val()+']').text()+ " in brew");
+		$('#headerSearch input[name=terms]').focus();
+		$.cookie("globalSearchType", $('#headerSearch select[name=type]').val());
+});
+		$('#headerSearch').submit(function() {
+			$.cookie("globalSearchTerm", $('#headerSearch input[name=terms]').val());
+		});
+		$('html').click(function() {
+			$('#all-tools-dropdown').hide();
+			$('#tools-link').removeClass('active');
+			$('.dropdown').removeClass('active');
+			$('#app-quicklinks .menubox').hide();
+			$('#searchTypeBox').hide();
+			$.cookie("globalSearchTerm", $('#headerSearch input[name=terms]').val());
+		 });
+		$(".footer-left").append($("#loginInfo").html().split("|")[0]);
+		var children = $("#loginInfo").children();
+		$("#loginInfo").contents().remove();
+		$("#loginInfo").prepend(children);
+		if ($('#loginInfo').text().indexOf("logout") != -1 )
+		{
+			$('#loginInfo').addClass("loggedin");
+			$('#loginInfo.loggedin').addClass("menu");
+			$('#loginInfo.loggedin a').wrapAll('<ul class="menubox">');
+			$('#loginInfo.loggedin ul a').wrap('<li>');
+			$('#loginInfo.loggedin').prepend("<a class='dropdown' href=#>"+$('#loginInfo ul li:first-child').text()+"</a>");
+		}
+		$('#loginInfo.loggedin ul li:first-child a').text("my info");
+		$('#headerSearch').click(function(event){
+			$('#searchTypeBox').show();
+			event.stopPropagation();
+		});
+		$('#app-quicklinks .menu').click(function(event){
+			if($('.dropdown', $(this)).hasClass('active')) {
+				$('.menubox').hide();
+				$('.dropdown').removeClass('active');
+			} else{
+			$('.menubox').hide();
+			$('#searchTypeBox').hide();
+			$('.dropdown').removeClass('active');
+			$('.menubox', $(this)).show();
+			$('.dropdown', $(this)).addClass('active');
+			$('#all-tools-dropdown').hide();$('#tools-link').removeClass('active')
+			}
+			event.stopPropagation();
+		});
+		$('body').css('opacity','1');
+    });
+</script>
+<!-- Piwik -->
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://analytics.engineering.redhat.com/piwik/" : "http://analytics.engineering.redhat.com/piwik/");
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 7);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://analytics.engineering.redhat.com/piwik/piwik.php?idsite=7" style="border:0" alt="" /></p></noscript>
+<!-- End Piwik Tracking Tag -->
+
+
+
+      </div>
+    </div>
+
+  </body>
+</html>
+
